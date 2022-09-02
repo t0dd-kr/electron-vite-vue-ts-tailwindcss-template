@@ -1,10 +1,6 @@
 import { rmSync } from 'fs'
 import path from 'path'
-import {
-  type Plugin,
-  type UserConfig,
-  defineConfig,
-} from 'vite'
+import { type Plugin, type UserConfig, defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
 
@@ -43,13 +39,13 @@ export default defineConfig({
   ],
   server: {
     host: process.env.VITE_DEV_SERVER_HOST,
-    port: process.env.VITE_DEV_SERVER_PORT as number,
+    port: process.env.VITE_DEV_SERVER_PORT as any,
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-  }
+  },
 })
 
 function withDebug(config: UserConfig): UserConfig {
@@ -59,9 +55,11 @@ function withDebug(config: UserConfig): UserConfig {
     config.plugins = (config.plugins || []).concat({
       name: 'electron-vite-debug',
       configResolved(config) {
-        const index = config.plugins.findIndex(p => p.name === 'electron-main-watcher');
+        const index = config.plugins.findIndex(
+          p => p.name === 'electron-main-watcher',
+        )
         // At present, Vite can only modify plugins in configResolved hook.
-        (config.plugins as Plugin[]).splice(index, 1)
+        ;(config.plugins as Plugin[]).splice(index, 1)
       },
     })
   }
